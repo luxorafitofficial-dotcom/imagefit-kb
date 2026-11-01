@@ -6,7 +6,7 @@ import { ImageUploader } from '@/components/ImageUploader';
 import { CompressionSettingsPanel } from '@/components/CompressionSettings';
 import { CompressionProgress } from '@/components/CompressionProgress';
 import { CompressionResult } from '@/components/CompressionResult';
-import { TestMode } from '@/components/TestMode';
+import { TestMode, INITIAL_TEST_SUITE } from '@/components/TestMode';
 import { TestReport } from '@/components/TestReport';
 import {
   ImageFileDetails,
@@ -31,50 +31,8 @@ export default function Home() {
   const [compressionResult, setCompressionResult] = useState<CompressionResultData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [testResults, setTestResults] = useState<TestCaseResult[]>([
-    {
-      id: 'test-1',
-      name: 'TEST 1: Photograph Compression',
-      description: 'Compress a bundled JPEG photograph to a strict 100 KB maximum target.',
-      targetKB: 100,
-      originalSize: 0,
-      actualSize: 0,
-      originalDimensions: { width: 0, height: 0 },
-      outputDimensions: { width: 0, height: 0 },
-      outputFormat: 'WebP / JPEG',
-      transparencyPreserved: 'N/A',
-      status: 'NOT TESTED',
-      message: 'Ready to execute.',
-    },
-    {
-      id: 'test-2',
-      name: 'TEST 2: Transparent PNG Preservation',
-      description: 'Verify alpha channel preservation and optimization on a bundled transparent PNG.',
-      targetKB: 80,
-      originalSize: 0,
-      actualSize: 0,
-      originalDimensions: { width: 0, height: 0 },
-      outputDimensions: { width: 0, height: 0 },
-      outputFormat: 'WebP',
-      transparencyPreserved: true,
-      status: 'NOT TESTED',
-      message: 'Ready to execute.',
-    },
-    {
-      id: 'test-3',
-      name: 'TEST 3: Difficult Target (Honest Failure Handling)',
-      description: 'Compress high-detail 3.6 MB pattern with dimension reduction OFF to an impossible 10 KB.',
-      targetKB: 10,
-      originalSize: 0,
-      actualSize: 0,
-      originalDimensions: { width: 0, height: 0 },
-      outputDimensions: { width: 0, height: 0 },
-      outputFormat: 'JPEG',
-      transparencyPreserved: 'N/A',
-      status: 'NOT TESTED',
-      message: 'Ready to execute.',
-    },
-  ]);
+  const [testResults, setTestResults] = useState<TestCaseResult[]>(INITIAL_TEST_SUITE);
+  const [activeSuite, setActiveSuite] = useState<'core' | 'all'>('core');
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -260,10 +218,15 @@ export default function Home() {
         </div>
 
         {/* Built-in Test Mode Section */}
-        <TestMode onTestsComplete={setTestResults} />
+        <TestMode
+          testResults={testResults}
+          onTestsComplete={setTestResults}
+          activeSuite={activeSuite}
+          onSuiteChange={setActiveSuite}
+        />
 
         {/* Test Report Section */}
-        <TestReport testResults={testResults} />
+        <TestReport testResults={testResults} activeSuite={activeSuite} />
       </main>
 
       {/* Footer */}

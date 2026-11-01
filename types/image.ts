@@ -68,6 +68,9 @@ export interface TestCaseResult {
   outputFormat: string;
   transparencyPreserved?: boolean | 'N/A';
   status: 'PASS' | 'FAIL' | 'NOT TESTED';
+  statusLabel?: string;
+  blobValid?: boolean;
+  isCoreTest?: boolean;
   message: string;
   durationMs?: number;
 }
