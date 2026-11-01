@@ -41,6 +41,9 @@ export default function Home() {
     if (imageDetails?.previewUrl && imageDetails.previewUrl !== details.previewUrl) {
       URL.revokeObjectURL(imageDetails.previewUrl);
     }
+    if (compressionResult?.previewUrl) {
+      URL.revokeObjectURL(compressionResult.previewUrl);
+    }
     setImageDetails(details);
     setCompressionResult(null);
     setProcessingState('ready');
@@ -51,6 +54,9 @@ export default function Home() {
     if (imageDetails?.previewUrl) {
       URL.revokeObjectURL(imageDetails.previewUrl);
     }
+    if (compressionResult?.previewUrl) {
+      URL.revokeObjectURL(compressionResult.previewUrl);
+    }
     setImageDetails(null);
     setCompressionResult(null);
     setProcessingState('idle');
@@ -59,6 +65,10 @@ export default function Home() {
 
   const handleStartCompress = async () => {
     if (!imageDetails) return;
+
+    if (compressionResult?.previewUrl) {
+      URL.revokeObjectURL(compressionResult.previewUrl);
+    }
 
     setProcessingState('compressing');
     setProgressData(null);
@@ -104,6 +114,9 @@ export default function Home() {
   };
 
   const handleChangeTarget = () => {
+    if (compressionResult?.previewUrl) {
+      URL.revokeObjectURL(compressionResult.previewUrl);
+    }
     setCompressionResult(null);
     setProcessingState('ready');
   };

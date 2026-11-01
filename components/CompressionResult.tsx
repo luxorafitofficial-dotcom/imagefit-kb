@@ -28,7 +28,7 @@ export const CompressionResult: React.FC<CompressionResultProps> = ({
   const [downloadTriggered, setDownloadTriggered] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const link = document.createElement('a');
     link.href = result.previewUrl;
     link.download = result.downloadName;
@@ -36,13 +36,25 @@ export const CompressionResult: React.FC<CompressionResultProps> = ({
     link.click();
     document.body.removeChild(link);
     setDownloadTriggered(true);
+
+    // Auto-verify downloaded file validity
+    const isValid = await verifyBlobValidity(result.compressed.blob);
+    if (isValid) {
+      setVerificationStatus(
+        `✓ Downloaded "${result.downloadName}" (${result.compressed.size.toLocaleString()} bytes) — Verified 100% valid decodable image.`
+      );
+    } else {
+      setVerificationStatus(`⚠ Downloaded candidate failed image bitmap decode test.`);
+    }
   };
 
   const handleVerifyDecodable = async () => {
     setVerificationStatus('Verifying blob decode...');
     const isValid = await verifyBlobValidity(result.compressed.blob);
     if (isValid) {
-      setVerificationStatus('VALID: Browser successfully decoded image bitmap without error.');
+      setVerificationStatus(
+        `✓ VALID: Browser successfully decoded image bitmap (${result.compressed.width} × ${result.compressed.height} px, ${result.compressed.size.toLocaleString()} bytes).`
+      );
     } else {
       setVerificationStatus('INVALID: Browser failed to decode this image candidate.');
     }
